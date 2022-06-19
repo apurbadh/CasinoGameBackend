@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,5 +24,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('user', [UserController::class, 'user']);
     Route::post('logout', [UserController::class, 'logout']);
+
+    // Chat routes
+    Route::get('messages', [ChatController::class, 'index']);
+    Route::post('messages', [ChatController::class, 'store']);
+
 
 });
