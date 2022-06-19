@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\UserAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -13,7 +14,6 @@ class UserController extends Controller
 
     public function user()
     {
-
         return response()->json([
             "user" => UserResource::make(auth()->user())
         ]);
@@ -21,9 +21,12 @@ class UserController extends Controller
 
     public function store(UserRequest $request, UserAction $action)
     {
+        $user = $action->create($request);
+
         return response()->json([
             "message" => "Registered Sucessfully",
-            "user" => UserResource::make($action->create($request))
+            "user" => UserResource::make($user),
+            "token" => $user->createToken($action->secretKey())->plainTextToken
         ], 201);
     }
 
@@ -35,21 +38,15 @@ class UserController extends Controller
 
     }
 
-    public function login(Request $request, UserAction $action)
+    public function login(UserLoginRequest $request, UserAction $action)
     {
-        $data = $action->checkValid($request->only("email", "password"));
-
-        if ($data["success"] == true) {
-            return response()->json([
-                "message" => "Sucessfully Logged in",
-                "user" => UserResource::make($data["user"])
-            ]);
-        }
+        $user = $action->getUser($request);
 
         return response()->json([
-            "message" => "Invalid Credientials",
-            "error" => $data["error"]
-        ], 422);
+            "message" => "Sucessfully Logged in",
+            "user" => UserResource::make($user),
+            "token" => $user->createToken($action->secretKey())->plainTextToken
+        ]);
 
     }
 }

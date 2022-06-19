@@ -17,8 +17,7 @@ class UserResource extends JsonResource
         return [
             "username" => $this->username,
             "email" => $this->email,
-            "image" => env("APP_URL") . "/" . $this->image,
-            "token" => $this->createToken()->plainTextToken
+            "image" => env("APP_URL") . $this->image,
         ];
     }
 }

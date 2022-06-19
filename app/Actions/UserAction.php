@@ -4,8 +4,8 @@ namespace App\Actions;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserAction {
 
@@ -35,29 +35,19 @@ class UserAction {
     }
 
 
-    public function checkValid($data)
+    public function getUser(Request $request)
     {
-        $user = User::where("email", $data["email"])->first();
+        $email = $request->input("email");
 
-        if (Auth::attempt($data))
-        {
-            return [
-                "success" => true,
-                "user" => $user
-            ];
-        }
-
-        if ($user) {
-
-            return [
-                "success" => false,
-                "error" => "Incorrect Password"
-            ];
-        }
-
-        return [
-            "success" => false,
-            "error" => "Invalid Email"
-        ];
+        return User::where("email", $email)
+                    ->first();
     }
+
+
+    public function secretKey(){
+
+        return Str::random(12);
+    }
+
+
 }
