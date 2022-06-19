@@ -34,4 +34,10 @@ class MessageEvent implements ShouldBroadcast
     {
         return new PrivateChannel('message-channel');
     }
+
+    public function broadcastAs()
+    {
+        return 'message-channel';
+    }
+
 }
